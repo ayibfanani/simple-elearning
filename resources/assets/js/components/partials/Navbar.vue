@@ -13,13 +13,16 @@
       </div>
       <div id="navMenu" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="admin.html">
-            Courses
+          <a class="navbar-item" href="/home">
+            <i class="fa fa-search"></i>&nbsp;Find Course
           </a>
         </div>
 
         <div class="navbar-end">
-          <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-item" href="/favorites">
+            <i class="fa fa-star-o"></i>&nbsp;Favorite Courses
+          </a>
+          <div class="navbar-item has-dropdown is-hoverable" v-if="role != 'student'">
             <a class="navbar-link" href="/courses">
               My Courses
             </a>
@@ -47,6 +50,12 @@
 </template>
 
 <script>
-    export default {
-    }
+  export default {
+    props: {
+      role: {
+        type: String,
+        required: true
+      },
+    },
+  }
 </script>

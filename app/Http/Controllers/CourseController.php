@@ -2,52 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Course;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\User;
+
 class CourseController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
+        $courses = Course::with('comments')->where('user_id', $user->id)->orderBy('created_at', 'desc')->paginate(10);
 
         $data = [
-            'user' => $user->toArray()
+            'user' => $user->toArray(),
+            'courses' => $courses
         ];
 
-        return view('home', $data);
+        return view('courses.index', $data);
     }
 
     public function show($id)
     {
+        $user = auth()->user();
+        $user = User::with('role')->find($user->id);
+        $course = Course::with(['user', 'comments'])->find($id);
+
         $data = [
-            'course' => [
-                'id' => 1,
-                'title' => 'The art of Startup',
-                'description' => 'Test',
-                'content' => '<p>Non arcu risus quis varius quam quisque. Dictum varius duis at consectetur lorem. Posuere sollicitudin aliquam ultrices sagittis orci a scelerisque purus semper. </p>
-                <p>Metus aliquam eleifend mi in nulla posuere sollicitudin aliquam ultrices. In hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit. Accumsan lacus vel facilisis volutpat. Non sodales neque sodales ut etiam.
-                    Est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus.</p>
-                <h3 class="has-text-centered">How to properly center tags in bulma?</h3>
-                <p> Proper centering of tags in bulma is done with class: <pre>level-item</pre>
-                    Voluptat ut farmacium tellus in metus vulputate. Feugiat in fermentum posuere urna nec. Pharetra convallis posuere morbi leo urna molestie.
-                    Accumsan lacus vel facilisis volutpat est velit egestas. Fermentum leo vel orci porta. Faucibus interdum posuere lorem ipsum.</p>',
-                'backdrop' => 'https://bulma.io/images/placeholders/1280x960.png',
-                'created_at' => '5 Days',
-                'updated_at' => '5 Days',
-                'author' => [
-                  'name' => 'Ayib Fanani',
-                  'email' => 'ayibfanani@gmail.com',
-                  'avatar' => 'https://bulma.io/images/placeholders/96x96.png'
-                ],
-                'comments' => [
-                    [
-                        'name' => 'Barbara Middleton',
-                        'body' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis porta eros lacus, nec ultricies elit blandit non. Suspendisse pellentesque mauris sit amet dolor blandit rutrum. Nunc in tempus turpis.'
-                    ],
-                    [
-                        'name' => 'Sean Brown',
-                        'body' => 'Donec sollicitudin urna eget eros malesuada sagittis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam blandit nisl a nulla sagittis, a lobortis leo feugiat.'
-                    ]
-                ]
-            ],
+            'user' => $user->toArray(),
+            'course' => $course->toArray(),
         ];
 
         return view('courses.show', $data);
@@ -55,26 +38,163 @@ class CourseController extends Controller
 
     public function create()
     {
-        return view('courses.add');
+        $data = [
+            'storage_path' => storage_path(),
+        ];
+
+        return view('courses.add', $data);
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        return view('home');
+        $rules = [
+            'title' => 'required|max:200',
+            'subtitle' => 'required',
+            'content' => 'required',
+            'duration' => 'required|min:1',
+            'attachments' => 'nullable|array',
+            'thumb' => 'nullable|url'
+        ];
+
+        if (!empty($request->attachments)) {
+            $rules['attachments.*'] = 'required|file';
+        }
+
+        $request->validate($rules);
+
+        $course = \DB::transaction(function () use ($request) {
+            $attachments = $this->_getCompiledAttachments($request);
+
+            $user = auth()->user();
+            $course = Course::create([
+                'user_id' => $user->id,
+                'title' => $request->title,
+                'subtitle' => $request->subtitle,
+                'duration' => $request->duration,
+                'content' => $request->content,
+                'thumb' => $request->thumb,
+                'attachments' => $attachments
+            ]);
+
+            if (!empty($course)) {
+                return true;
+            }
+
+            return false;
+        });
+
+        if (!empty($course)) {
+            return redirect()->route('courses.index')->withStatus('Course has been posted!');
+        }
+
+        return redirect()->back()->withErrors('Oops, looks like something wrong!');
     }
 
-    public function edit()
+    public function edit($id)
     {
-        return view('courses.edit');
+        $user = auth()->user();
+        $course = Course::with(['user', 'comments'])->where('user_id', $user->id)->find($id);
+
+        $data = [
+            'course' => $course->toArray(),
+            'storage_path' => storage_path()
+        ];
+
+        return view('courses.edit', $data);
     }
 
-    public function update()
+    public function update(Request $request, $id)
     {
-        return view('home');
+        $rules = [
+            'title' => 'required|max:200',
+            'subtitle' => 'required',
+            'content' => 'required',
+            'duration' => 'required|min:1',
+            'attachments' => 'nullable|array',
+            'thumb' => 'nullable|url'
+        ];
+
+        if (!empty($request->attachments)) {
+            $rules['attachments.*'] = 'required|file';
+        }
+
+        $request->validate($rules);
+
+        $course = \DB::transaction(function () use ($request, $id) {
+            $attachments = $this->_getCompiledAttachments($request);
+
+            $user = auth()->user();
+            $course = Course::where('user_id', $user->id)->find($id);
+            $course->fill([
+                'user_id' => $user->id,
+                'title' => $request->title,
+                'subtitle' => $request->subtitle,
+                'duration' => $request->duration,
+                'content' => $request->content,
+                'thumb' => $request->thumb,
+                'attachments' => $attachments
+            ]);
+
+            return $course->save();
+        });
+
+        if ($course) {
+            return redirect()->route('courses.index')->withStatus('Course has been updated!');
+        }
+
+        return redirect()->back()->withErrors('Oops, looks like something wrong!');
     }
 
-    public function delete()
+    public function delete($id)
     {
-        return view('home');
+        $user = auth()->user();
+        $course = Course::where('user_id', $user->id)->find($id);
+
+        abort_if(empty($course), 404);
+
+        $is_deleted = \DB::transaction(function () use ($course) {
+            $course->comments()->delete();
+            if ($course->delete()) {
+                return true;
+            }
+
+            return false;
+        });
+
+        if ($is_deleted) {
+            return redirect()->back()->withMessage('Course has been deleted');
+        }
+
+        return redirect()->back()->withErrors('Oops, looks like something wrong!');
+    }
+
+    public function download($encrypted_path)
+    {
+        $path = decrypt($encrypted_path);
+
+        return response()->download(storage_path("app/$path"));
+    }
+
+    private function _getCompiledAttachments(Request $request)
+    {
+        $attachments = [];
+
+        if (!empty($request->attachments)) {
+            foreach ($request->attachments as $file) {
+                $mime_type = $file->getClientMimeType();
+                $type = explode('/', $mime_type)[0];
+                $path = Storage::putFile(str_plural($type), $file);
+                $name = explode('/', $path)[1];
+
+                $attachment = [
+                    'type' => $type,
+                    'name' => $name
+                ];
+
+                array_push($attachments, $attachment);
+            }
+        }
+
+        return $attachments;
     }
 }

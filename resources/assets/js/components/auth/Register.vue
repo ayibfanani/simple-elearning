@@ -1,5 +1,5 @@
 <template>
-  <section class="hero is-success is-fullheight">
+  <section class="hero is-fullheight" id="auth">
     <div class="hero-body">
       <div class="container has-text-centered">
         <div class="column is-4 is-offset-4">
@@ -34,6 +34,17 @@
                   <input class="input is-large" type="password" placeholder="Password Confirmation" name="password_confirmation">
                 </div>
               </div>
+
+              <div class="field">
+                <div class="control">
+                  <input type="hidden" name="role" :value="is_lecturer ? 'lecturer' : 'student'">
+                  <div class="buttons has-addons is-centered">
+                    <span class="button" :class="is_lecturer ? 'is-success' : ''" @click.prevent="registerAs('lecturer')">As Lecturer</span>
+                    <span class="button" :class="!is_lecturer ? 'is-success' : ''" @click.prevent="registerAs('student')">As Student</span>
+                  </div>
+                </div>
+              </div>
+
               <button class="button is-block is-info is-large is-fullwidth" type="submit">Register</button>
             </form>
           </div>
@@ -50,6 +61,22 @@
 
 <script>
   export default {
-    props: ['action', 'token']
+    props: ['action', 'token'],
+
+    data() {
+      return {
+        is_lecturer: true
+      }
+    },
+
+    methods: {
+      registerAs(role_string) {
+        if (role_string == 'lecturer') {
+          this.is_lecturer = true;
+        } else {
+          this.is_lecturer = false;
+        }
+      }
+    }
   }
 </script>

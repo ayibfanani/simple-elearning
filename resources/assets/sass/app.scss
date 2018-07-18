@@ -8,7 +8,7 @@
 @import "~font-awesome/scss/font-awesome";
 
 @import 'admin';
-@import 'login';
+@import 'auth';
 
 html, body {
   font-family: 'Open Sans', serif;
@@ -23,8 +23,16 @@ html, body {
   position: fixed;
   right: 15px;
   top: 15px;
+  z-index: 99;
 }
 
 .breadcrumb {
   margin-bottom: 0.5rem !important;
+}
+
+.button-favorite {
+  position: absolute;
+  z-index: 1;
+  margin-left: 8px;
+  margin-top: 4px;
 }

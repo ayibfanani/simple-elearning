@@ -26,7 +26,7 @@
 
         @guest
         @else
-            <navbar></navbar>
+            <navbar role="{{ auth()->user()->role->toArray()['key'] }}"></navbar>
         @endguest
         <div>
             @yield('content')

@@ -7,7 +7,7 @@
             <sidebar></sidebar>
         </div> --}}
         <div class="column is-9 is-narrow">
-            <course-edit></course-edit>
+            <course-edit token="{{ csrf_token() }}" encoded_course="{{ json_encode($course) }}" storage_path="{{ storage_path() }}"></course-edit>
         </div>
     </div>
 </div>
