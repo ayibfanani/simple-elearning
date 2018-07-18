@@ -1,6 +1,13 @@
 <template>
   <div>
     <section class="hero is-primary is-medium is-bold">
+        <a class="button-favorite has-text-warning"
+          href=""
+          @click.prevent="favorite_courses.indexOf(course.id) != -1 ? unfavorite(course.id) : favorite(course.id)"
+        >
+          <i class="fa fa-lg" :class="favorite_courses.indexOf(course.id) != -1 ? 'fa-star' : 'fa-star-o'"></i>
+        </a>
+
         <div class="hero-body" :style="{
           backgroundImage: `url(${course.thumb})`,
           backgroundPosition: 'center center',
@@ -108,6 +115,9 @@ export default {
       type: String,
       required: true,
     },
+    encoded_favorite_courses: {
+      type: String
+    },
     encoded_user: {
       type: String,
       required: true
@@ -119,6 +129,7 @@ export default {
 
   data() {
     return {
+      favorite_courses: JSON.parse(this.encoded_favorite_courses),
       user: JSON.parse(this.encoded_user),
       course: JSON.parse(this.encoded_course)
     }
@@ -135,6 +146,27 @@ export default {
         `;
 
         $(formDelete).appendTo('body').submit();
+      }
+    },
+    favorite(course_id) {
+      let formUnFavorite = `
+        <form method="POST" action="/favorite/${course_id}">
+          <input type="hidden" name="_token" value="${this.token}"/>
+        </form>
+      `;
+
+      $(formUnFavorite).appendTo('body').submit();
+    },
+    unfavorite(course_id) {
+      if (confirm('Are you sure?')) {
+        let formUnFavorite = `
+          <form method="POST" action="/favorite/${course_id}">
+            <input type="hidden" name="_token" value="${this.token}"/>
+            <input type="hidden" name="_method" value="DELETE"/>
+          </form>
+        `;
+
+        $(formUnFavorite).appendTo('body').submit();
       }
     }
   }

@@ -97,7 +97,11 @@
             @endif
         </div>
         <div class="column is-9">
-            <course-show encoded_user="{{ json_encode($user) }}" token="{{ csrf_token() }}" encoded_course="{{ json_encode($course) }}"></course-show>
+            <course-show encoded_favorite_courses="{{ json_encode($favorite_courses) }}"
+                encoded_user="{{ json_encode($user) }}"
+                token="{{ csrf_token() }}"
+                encoded_course="{{ json_encode($course) }}"
+            ></course-show>
         </div>
     </div>
 </div>

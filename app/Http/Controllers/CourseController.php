@@ -31,6 +31,7 @@ class CourseController extends Controller
         $data = [
             'user' => $user->toArray(),
             'course' => $course->toArray(),
+            'favorite_courses' => $user->favorites->pluck('id')->toArray()
         ];
 
         return view('courses.show', $data);
