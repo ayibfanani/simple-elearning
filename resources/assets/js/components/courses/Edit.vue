@@ -1,10 +1,11 @@
 <template>
-  <div>Edit Course</div>
+  <div class="box">
+    <course-form :is_edit="true"></course-form>
+  </div>
 </template>
 
 <script>
 export default {
-
 }
 </script>
 

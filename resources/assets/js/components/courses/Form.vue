@@ -22,6 +22,13 @@
     </div>
 
     <div class="field">
+      <label class="label">Thumbnail Image</label>
+      <div class="control">
+        <input type="text" name="thumb" class="input" placeholder="e.g: https://blabla.com"/>
+      </div>
+    </div>
+
+    <div class="field">
       <label class="label">Attachment</label>
       <div class="control">
         <input type="file" name="attachment" class="input" />
@@ -30,7 +37,8 @@
 
     <div class="field is-grouped">
       <div class="control">
-        <button class="button is-primary">Add</button>
+        <button class="button is-primary" v-if="is_edit">Update</button>
+        <button class="button is-primary" v-else>Add</button>
       </div>
       <div class="control">
         <a href="/courses" class="button is-text">Cancel</a>
@@ -41,7 +49,7 @@
 
 <script>
 export default {
-
+  props: ['is_edit']
 }
 </script>
 

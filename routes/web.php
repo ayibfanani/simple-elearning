@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', 'CourseController@index')->name('courses.index');
         Route::get('/add', 'CourseController@create')->name('courses.create');
         Route::post('/add', 'CourseController@store')->name('courses.store');
+        Route::get('{id}', 'CourseController@show')->name('courses.show');
         Route::get('{id}/edit', 'CourseController@edit')->name('courses.edit');
         Route::put('{id}/update', 'CourseController@update')->name('courses.update');
         Route::delete('{id}/delete', 'CourseController@delete')->name('courses.delete');

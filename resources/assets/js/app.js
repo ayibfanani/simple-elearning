@@ -21,6 +21,7 @@ Vue.component('register', require('./components/auth/Register.vue'));
 Vue.component('navbar', require('./components/partials/Navbar.vue'));
 Vue.component('sidebar', require('./components/partials/Sidebar.vue'));
 Vue.component('home', require('./components/Home.vue'));
+Vue.component('course-show', require('./components/courses/Show.vue'));
 Vue.component('course-add', require('./components/courses/Add.vue'));
 Vue.component('course-edit', require('./components/courses/Edit.vue'));
 Vue.component('course-form', require('./components/courses/Form.vue'));

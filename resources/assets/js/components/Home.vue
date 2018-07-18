@@ -17,45 +17,44 @@
       </div>
     </section>
     <div class="columns">
-      <div class="column is-half" v-for="(module, index) in modules" :key="index">
-        <a href="">
+      <div class="column is-half" v-for="(course, index) in courses" :key="index">
+        <a :href="`/courses/${course.id}`">
           <div class="card">
             <div class="card-image">
               <figure class="image is-4by3">
-                <img :src="module.backdrop" alt="Placeholder image">
+                <img :src="course.backdrop" alt="Placeholder image">
               </figure>
             </div>
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <p class="title is-4" style="margin-bottom: 0.5rem;">{{ module.title }}</p>
-                  <!-- <p class="subtitle is-6">{{ module.author.email }}</p> -->
+                  <p class="title is-4" style="margin-bottom: 0.5rem;">{{ course.title }}</p>
+                  <!-- <p class="subtitle is-6">{{ course.author.email }}</p> -->
                 </div>
               </div>
 
               <!-- <div class="media">
                 <div class="media-left">
                   <figure class="image is-48x48">
-                    <img :src="module.author.avatar" alt="Placeholder image">
+                    <img :src="course.author.avatar" alt="Placeholder image">
                   </figure>
                 </div>
                 <div class="media-content">
-                  <p class="title is-4" style="margin-bottom: 0.5rem;">{{ module.author.name }}</p>
-                  <p class="subtitle is-6">{{ module.author.email }}</p>
+                  <p class="title is-4" style="margin-bottom: 0.5rem;">{{ course.author.name }}</p>
+                  <p class="subtitle is-6">{{ course.author.email }}</p>
                 </div>
               </div> -->
 
               <div class="content">
-                {{ module.description }}
+                {{ course.description }}
                 <br>
-                <!-- <p>{{ module.courses.length }} Courses</p> -->
-                <time>Last Updated: {{ module.updated_at }}</time>
+                <!-- <p>{{ course.courses.length }} Courses</p> -->
+                <time>Last Updated: {{ course.updated_at }}</time>
               </div>
             </div>
 
             <footer class="card-footer">
-              <a href="#" class="card-footer-item">Save</a>
-              <a href="#" class="card-footer-item">Edit</a>
+              <a :href="`/courses/${course.id}/edit`" class="card-footer-item">Edit</a>
               <a href="#" class="card-footer-item">Delete</a>
             </footer>
           </div>
@@ -77,8 +76,9 @@ export default {
   data() {
     return {
       user: JSON.parse(this.encoded_user),
-      modules: [
+      courses: [
         {
+          id: 1,
           title: 'The art of Startup',
           description: 'Test',
           backdrop: 'https://bulma.io/images/placeholders/1280x960.png',
@@ -89,9 +89,9 @@ export default {
             email: 'ayibfanani@gmail.com',
             avatar: 'https://bulma.io/images/placeholders/96x96.png'
           },
-          courses: []
         },
         {
+          id: 2,
           title: 'Supply Chain Management',
           description: 'Test',
           backdrop: 'https://bulma.io/images/placeholders/1280x960.png',
@@ -102,7 +102,6 @@ export default {
             email: 'ayibfanani@gmail.com',
             avatar: 'https://bulma.io/images/placeholders/96x96.png'
           },
-          courses: []
         }
       ]
     }
