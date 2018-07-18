@@ -42,7 +42,7 @@
       <div class="field">
         <label class="label">Attachment</label>
         <div class="control" style="margin-bottom: 0.7rem;">
-          <input type="file" name="attachments[]" class="input" />
+          <input type="file" name="attachments[]" class="input" :accept="accept_files" />
         </div>
       </div>
 
