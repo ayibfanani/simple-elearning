@@ -22,7 +22,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('home', 'HomeController@index')->name('home');
     Route::get('favorites', 'HomeController@getFavorites')->name('courses.favorite');
     Route::get('download/{encrypted_path}', 'CourseController@download')->name('download');
-    Route::get('courses/{id}', 'CourseController@show')->name('courses.show');
     Route::post('comments/add/courses/{course_id}', 'CommentController@store')->name('comment.store');
     Route::post('favorite/{course_id}', 'HomeController@favorite')->name('favorite');
     Route::delete('favorite/{course_id}', 'HomeController@unfavorite')->name('unfavorite');
@@ -39,4 +38,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::delete('comments/{id}/delete', 'CommentController@delete')->name('comment.delete');
     });
+
+    Route::get('courses/{id}', 'CourseController@show')->name('courses.show');
 });
