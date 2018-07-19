@@ -66,7 +66,7 @@
                       </p>
                     </div>
                   </div>
-                  <div class="media-right" v-if="user.role.key != 'student'">
+                  <div class="media-right" v-if="user.id == course.user_id">
                     <button class="delete" @click.prevent="deleteComment(comment.id)"></button>
                   </div>
                 </article>
