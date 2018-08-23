@@ -1,5 +1,9 @@
 <?php
 
+use App\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +17,16 @@
 
 Route::get('/', function () {
     return redirect()->route('login');
+});
+
+Route::get('/testbroh', function () {
+    $user = User::first();
+
+    try {
+        Mail::to($user)->send(new TestMail());
+    } catch (\Exception $e) {
+        dd($e);
+    }
 });
 
 Auth::routes();
